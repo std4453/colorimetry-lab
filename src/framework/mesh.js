@@ -46,4 +46,4 @@ class Quad2 extends Mesh {
     }
 }
 
-export { Mesh, Quad2 };
+export { Visible, Mesh, Quad2 };
