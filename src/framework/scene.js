@@ -17,7 +17,7 @@ class Scene {
     constructor(gl, settings = {}) {
         this.gl = gl;
 
-        this.settings = defaults(defaultSettings, settings);
+        this.settings = defaults(settings, defaultSettings);
 
         this.root = new Node(gl);
         this.camera = null;

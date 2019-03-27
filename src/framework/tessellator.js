@@ -28,7 +28,7 @@ class Tessellator {
                 ...typeToDetails.float,
             },
             ...arrays
-                .map(el => defaults(defaultDefinition, el))
+                .map(el => defaults(el, defaultDefinition))
                 .map(({ name, type, ...rest }) => ({
                     name,
                     attrib: material.attrib(name),

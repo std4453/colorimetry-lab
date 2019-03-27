@@ -56,7 +56,6 @@ const testgl = ({ gl }) => {
 
     const camera = new HUDCamera(gl, -100, 100);
     scene.root.addChild(camera);
-    
     scene.camera = camera;
 
     run(gl, scene, () => {});

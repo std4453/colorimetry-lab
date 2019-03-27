@@ -12,7 +12,7 @@ const preprocess = (data) => {
 };
 
 const loadData = async () => {
-    const raw = await load('data/color_matching_functions.csv');
+    const raw = (await load('public/data/color_matching_functions.csv')).map(arr => arr.map(n => parseFloat(n)));
     return preprocess(raw);
 };
 
@@ -31,4 +31,4 @@ const async_wave_length_to_xyz = async () => {
     };
 };
 
-export default async_wave_length_to_xyz
+export default async_wave_length_to_xyz;

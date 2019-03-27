@@ -15,9 +15,9 @@ export default {
         format: 'iife'
     },
     plugins: [
+        builtins(),
         resolve({ preferBuiltins: false }),
         commonjs(),
-        builtins(),
         globals(),
         glslify({ basedir: 'src/shaders' }),
         babel({ exclude: 'node_modules/**' }),
