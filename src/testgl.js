@@ -1,6 +1,9 @@
 import { mat4 } from 'gl-matrix';
 import loadProgram from './shader';
 
+import vsSource from './shaders/test_vert.glsl';
+import fsSource from './shaders/test_frag.glsl';
+
 const initBuffers = (gl) => {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -57,8 +60,6 @@ const drawScene = (gl, programInfo, buffers) => {
 }
 
 const testgl = async ({ gl }) => {
-    const vsSource = await (await fetch('public/shaders/test_vert.glsl')).text();
-    const fsSource = await (await fetch('public/shaders/test_frag.glsl')).text();
     const shaderProgram = loadProgram(gl, vsSource, fsSource);
     const programInfo = {
         program: shaderProgram,

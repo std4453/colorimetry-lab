@@ -4,6 +4,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+import glslify from 'rollup-plugin-glslify';
 
 export default {
     input: 'src/index.js',
@@ -18,5 +19,6 @@ export default {
         globals(),
         serve(),
         livereload(),
+        glslify({ basedir: 'src/shaders' })
     ],
 };
