@@ -5,6 +5,8 @@ import globals from 'rollup-plugin-node-globals';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import glslify from 'rollup-plugin-glslify';
+import babel from 'rollup-plugin-babel';
+import { uglify } from 'rollup-plugin-uglify';
 
 export default {
     input: 'src/index.js',
@@ -17,8 +19,10 @@ export default {
         commonjs(),
         builtins(),
         globals(),
-        serve(),
+        glslify({ basedir: 'src/shaders' }),
+        babel({ exclude: 'node_modules/**' }),
+        // uglify(),
         livereload(),
-        glslify({ basedir: 'src/shaders' })
+        serve(),
     ],
 };
