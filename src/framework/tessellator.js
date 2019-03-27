@@ -19,7 +19,6 @@ const typeToDetails = {
 class Tessellator {
     constructor(material, arrays = []) {
         this.material = material;
-        material.use();
         this.definitions = [
             {
                 name: 'position',
@@ -52,15 +51,23 @@ class Tessellator {
         return this;
     }
 
-    tessellate(gl, buffers = {}) {
-        for (const { name, attrib, count, array: ActualArray, constant, normalize, usage } of this.definitions) {
+    populateBuffers(gl, buffers = {}) {
+        this.material.use();
+        for (const { name, array: ActualArray, usage } of this.definitions) {
             const buffer = name in buffers ? buffers[name] : gl.createBuffer(); // reuse buffers
             buffers[name] = buffer;
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.bufferData(gl.ARRAY_BUFFER, new ActualArray(this.arrays[name]), gl[usage]);
-            gl.vertexAttribPointer(attrib, count, gl[constant], normalize, 0, 0);
         }
         return { count: this.arrays.position.length / 3, buffers };
+    }
+
+    loadBuffers(gl, buffers) {
+        this.material.use();
+        for (const { name, attrib, count, constant, normalize } of this.definitions) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffers[name]);
+            gl.vertexAttribPointer(attrib, count, gl[constant], normalize, 0, 0);
+        }
     }
 }
 
@@ -80,14 +87,16 @@ class TessellatedMesh extends Visible {
     }
 
     endTessellation() {
-        const { count, buffers } = this.tessellator.tessellate(this.gl, this.buffers);
+        const { count, buffers } = this.tessellator.populateBuffers(this.gl, this.buffers);
         this.buffers = buffers;
         this.count = count;
         return count;
     }
 
     draw({ matrix }) {
+        this.material.use();
         this.material.setModelViewProjectionMatrix(matrix);
+        this.tessellator.loadBuffers(this.gl, this.buffers);
         this.gl.drawArrays(this.type, 0, this.count);
     }
 }
