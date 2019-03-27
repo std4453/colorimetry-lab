@@ -22,4 +22,4 @@ const loadProgram = (gl, vsSource, fsSource) => {
     return shaderProgram;
 };
 
-export default loadProgram;
+export { loadProgram };

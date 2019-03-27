@@ -1,7 +1,10 @@
 import { mat4 } from 'gl-matrix';
 
-import { Scene, Quad2, run, HUDCamera } from './scene';
-import { PureColorMaterial } from './material';
+import Scene from './framework/scene';
+import { Quad2 } from './framework/mesh';
+import { HUDCamera } from './framework/camera';
+import { PureColorMaterial } from './framework/material';
+import run from './framework/run';
 
 const testgl = ({ gl }) => {
     const scene = new Scene(gl);
