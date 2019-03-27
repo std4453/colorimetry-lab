@@ -2,13 +2,8 @@ const loadShader = (gl, type, source) => {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-    }
-
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+        throw new Error(gl.getShaderInfoLog(shader));
     return shader;
 };
 
@@ -21,10 +16,8 @@ const loadProgram = (gl, vsSource, fsSource) => {
     gl.attachShader(shaderProgram, fragmentShader);
     gl.linkProgram(shaderProgram);
 
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-        return null;
-    }
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
+        throw new Error(gl.getProgramInfoLog(shaderProgram));
 
     return shaderProgram;
 };
