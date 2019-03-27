@@ -30,12 +30,11 @@ class Tessellator {
             },
             ...arrays
                 .map(el => defaults(defaultDefinition, el))
-                .map(({ name, count, type, usage }) => ({
+                .map(({ name, type, ...rest }) => ({
                     name,
                     attrib: material.attrib(name),
-                    count,
                     ...typeToDetails[type],
-                    usage,
+                    ...rest,
                 })),
         ];
         this.arrays = {};
