@@ -1,9 +1,7 @@
 import { mat4, mat3 } from 'gl-matrix';
 
 import { makeDrei, run } from './drei';
-
-import vsSource from './shaders/xyY.vert';
-import fsSource from './shaders/xyY.frag';
+import materialClasses from './materials';
 
 import async_wave_length_to_xyz from './wave_length';
 
@@ -11,7 +9,7 @@ const xyY = async ({ gl }) => {
     const wave_length_to_xyz = await async_wave_length_to_xyz();
     const width = 400, height = 400;
     
-    const Drei = makeDrei(gl);
+    const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
     
     {
@@ -46,15 +44,7 @@ const xyY = async ({ gl }) => {
     {
         const vY = 0.3;
         const startWL = 390, endWL = 750, step = 0.1;
-        const material = new Drei.Material(vsSource, fsSource);
-        const uXYZ2sRGB = material.uniform('u_XYZ2sRGB');
-        const mat = mat3.fromValues(
-            3.2406, -1.5372, -0.4986,
-            -0.9689, 1.8758, 0.0415,
-            0.0557, -0.2040, 1.0570,
-        );
-        mat3.transpose(mat, mat);
-        gl.uniformMatrix3fv(uXYZ2sRGB, false, mat);
+        const material = new Drei.CIE1931xyYMaterial();
 
         const t = new Drei.Tessellator(material);
         for (let i = startWL; i <= endWL; i += step) {

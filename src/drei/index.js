@@ -23,12 +23,13 @@ const wrapAll = (obj, params) => {
     return wrapped;
 };
 
-const makeDrei = (gl) => wrapAll({
+const makeDrei = (gl, moreClasses) => wrapAll({
     Node, Group, Visible, Mesh, Camera, Material,
     HUDCamera, OrthogonalCamera, PerspectiveCamera,
     PureColorMaterial,
     Tessellator,
     Scene,
+    ...moreClasses,
 }, [gl]);
 
 export { makeDrei, run };
