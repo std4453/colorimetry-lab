@@ -37,21 +37,30 @@ class Tessellator {
                 })),
         ];
         this.arrays = {};
-        this.clear();
         for (const { name } of this.definitions) {
             this[name] = (...data) => {
                 this.arrays[name].push(...data);
                 return this;
             };
         }
+        this.clear();
     }
 
     clear() {
         for (const { name } of this.definitions) this.arrays[name] = [];
-        return this;
     }
 
-    populateBuffers(gl, buffers = {}) {
+    enableArrays(gl) {
+        for (const { attrib } of this.definitions) gl.enableVertexAttribArray(attrib);
+    }
+
+    disableArrays(gl) {
+        for (const { attrib } of this.definitions) gl.disableVertexAttribArray(attrib);
+    }
+
+    begin() {}
+
+    end(gl, buffers = {}) {
         this.material.use();
         for (const { name, array: ActualArray, usage } of this.definitions) {
             const buffer = name in buffers ? buffers[name] : gl.createBuffer(); // reuse buffers
@@ -59,7 +68,9 @@ class Tessellator {
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.bufferData(gl.ARRAY_BUFFER, new ActualArray(this.arrays[name]), gl[usage]);
         }
-        return { count: this.arrays.position.length / 3, buffers };
+        const count = this.arrays.position.length / 3;
+        this.clear();
+        return { count, buffers };
     }
 
     loadBuffers(gl, buffers) {
@@ -83,11 +94,14 @@ class TessellatedMesh extends Visible {
     }
 
     beginTessellation() {
-        return this.tessellator.clear();
+        this.tessellator.enableArrays(this.gl);
+        this.tessellator.begin(this.gl);
+        return this.tessellator;
     }
 
     endTessellation() {
-        const { count, buffers } = this.tessellator.populateBuffers(this.gl, this.buffers);
+        const { count, buffers } = this.tessellator.end(this.gl, this.buffers);
+        this.tessellator.disableArrays(this.gl);
         this.buffers = buffers;
         this.count = count;
         return count;
@@ -96,8 +110,10 @@ class TessellatedMesh extends Visible {
     draw({ matrix }) {
         this.material.use();
         this.material.setModelViewProjectionMatrix(matrix);
+        this.tessellator.enableArrays(this.gl);
         this.tessellator.loadBuffers(this.gl, this.buffers);
         this.gl.drawArrays(this.type, 0, this.count);
+        this.tessellator.disableArrays(this.gl);
     }
 }
 
