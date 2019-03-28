@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Visible, Mesh } from './mesh';
+import { Mesh } from './classes';
 import { attribTypes } from './utils';
 
 const { defaults } = _;
