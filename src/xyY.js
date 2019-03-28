@@ -11,73 +11,38 @@ const xyY = async ({ gl }) => {
     
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
+
+
+    const colors = new Drei.Tessellator(new Drei.CIE1931xyYMaterial())
+        .v_pos(0, 0).v_xy(0, 0)
+        .v_pos(0, width).v_xy(0, 1)
+        .v_pos(height, 0).v_xy(1, 0)
+        .build(gl.TRIANGLES);
+    mat4.translate(colors.matrix, colors.matrix, [-width / 2, -height / 2, 0]);
+    colors.uniforms.u_Y = [1],
+    scene.root.addChild(colors);
     
-    {
-        const step = 0.1;
-        const material = new Drei.MonosRGBMaterial();
+    const startWL = 390, endWL = 750, step = 0.1;
 
-        const t = new Drei.Tessellator(material);
-        for (let x = 0; x <= 1; x += step) {
-            t
-                .v_pos(x * width, 0, 0)
-                .v_pos(x * width + 1, 0, 0)
-                .v_pos(x * width + 1, height, 0)
-                .v_pos(x * width + 1, height, 0)
-                .v_pos(x * width, height, 0)
-                .v_pos(x * width, 0, 0);
-        }
-        for (let y = 0; y <= 1; y += step) {
-            t
-                .v_pos(0, y * height, 0)
-                .v_pos(width, y * height, 0)
-                .v_pos(width, y * height + 1, 0)
-                .v_pos(width, y * height + 1, 0)
-                .v_pos(0, y * height + 1, 0)
-                .v_pos(0, y * height, 0);
-        }
-        const bg = t.build(gl.TRIANGLES);
-        bg.uniforms.u_sRGB = [0.5, 0.5, 0.5];
-        mat4.translate(bg.matrix, bg.matrix, [-width / 2, -height / 2, -1]);
-        scene.root.addChild(bg);
+    const t = new Drei.Tessellator(new Drei.MonosRGBMaterial());
+    for (let i = startWL; i <= endWL; i += step) {
+        const { X, Y, Z } = wave_length_to_xyz(i);
+        const x = X / (X + Y + Z), y = Y / (X + Y + Z);
+        t.v_pos(x * width, y * height, 0);
     }
-    
-    {
-        const vY = 0.8;
-        const startWL = 390, endWL = 750, step = 0.1;
-
-        const material = new Drei.CIE1931xyYMaterial();
-        const t = new Drei.Tessellator(material);
-        for (let i = startWL; i <= endWL; i += step) {
-            const { X, Y, Z } = wave_length_to_xyz(i);
-            const x = X / (X + Y + Z), y = Y / (X + Y + Z);
-            t.v_pos(x * width, y * height, 0).v_xyY(x, y, vY);
-        }
-        const contour = t.build(gl.TRIANGLE_FAN);
-        mat4.translate(contour.matrix, contour.matrix, [-width / 2, -height / 2, 0]);
-        scene.root.addChild(contour);
-    }
-
-    {
-        const startWL = 390, endWL = 750, step = 0.1;
-
-        const material = new Drei.MonosRGBMaterial();
-        const t = new Drei.Tessellator(material);
-        for (let i = startWL; i <= endWL; i += step) {
-            const { X, Y, Z } = wave_length_to_xyz(i);
-            const x = X / (X + Y + Z), y = Y / (X + Y + Z);
-            t.v_pos(x * width, y * height, 0);
-        }
-        const outline = t.build(gl.LINE_STRIP);
-        outline.uniforms.u_sRGB = [0, 0, 0];
-        mat4.translate(outline.matrix, outline.matrix, [-width / 2, -height / 2, 1]);
-        scene.root.addChild(outline);
-    }
+    const outline = t.build(gl.LINE_STRIP);
+    outline.uniforms.u_sRGB = [0, 0, 0];
+    mat4.translate(outline.matrix, outline.matrix, [-width / 2, -height / 2, 1]);
+    scene.root.addChild(outline);
 
     const camera = new Drei.HUDCamera(-100, 100);
     scene.root.addChild(camera);
     scene.camera = camera;
 
-    run(gl, scene, camera, () => { });
+    run(gl, scene, camera, () => {
+        const time = Date.now();
+        colors.uniforms.u_Y = [Math.sin(time / 1000) * 0.5 + 0.5]
+    });
 };
 
 export default xyY;

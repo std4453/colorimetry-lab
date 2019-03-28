@@ -45,6 +45,12 @@ const attribTypes = {
 };
 
 const uniformTypes = {
+    'FLOAT': {
+        setter: 'uniform1fv',
+        size: 1,
+        defaults: [0],
+        params: [],
+    },
     'FLOAT_VEC2': {
         setter: 'uniform2fv',
         size: 2,

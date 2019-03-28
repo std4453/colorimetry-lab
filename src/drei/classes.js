@@ -121,12 +121,6 @@ class Material {
         return this.gl.getUniformLocation(this.program, name);
     }
 
-    setUniforms() {
-        for (const key in this.uniforms) {
-
-        }
-    }
-
     use() {
         this.gl.useProgram(this.program);
     }
