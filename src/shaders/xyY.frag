@@ -1,7 +1,7 @@
 precision mediump float;
 
-uniform mat3 XYZ2sRGB;
-uniform float Y;
+uniform mat3 u_XYZ2sRGB;
+uniform float u_Y;
 varying vec2 xy;
 
 vec3 gamma_correct(vec3 raw) {
@@ -12,7 +12,7 @@ vec3 gamma_correct(vec3 raw) {
 }
 
 void main() {
-    vec3 XYZ = vec3(Y / xy.y * xy.x, Y, Y / xy.y * (1.0 - xy.x - xy.y));
-    vec3 rgb = clamp(XYZ2sRGB * XYZ, vec3(0.0), vec3(1.0));
+    vec3 XYZ = vec3(u_Y / xy.y * xy.x, u_Y, u_Y / xy.y * (1.0 - xy.x - xy.y));
+    vec3 rgb = clamp(u_XYZ2sRGB * XYZ, vec3(0.0), vec3(1.0));
     gl_FragColor = vec4(gamma_correct(rgb), 1.0);
 }

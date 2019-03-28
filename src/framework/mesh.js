@@ -1,4 +1,5 @@
 import { Node } from './classes';
+import { attribTypes } from './utils';
 
 class Visible extends Node {
     constructor(gl, material) {
@@ -8,42 +9,34 @@ class Visible extends Node {
 
     renderSelf(ctx) {
         this.material.use();
+        this.material.enableAttribs();
         this.draw(ctx);
+        this.material.disableAttribs();
     }
 
     draw() { }
 }
 
 class Mesh extends Visible {
-    constructor(gl, material, type, vertices) {
+    constructor(gl, material, type) {
         super(gl, material);
-        this.verticesBuffer = this.gl.createBuffer();
-        this.vertices = vertices;
+        this.buffers = this.material.createBuffers();
         this.type = type;
-    }
-
-    initSelf() {
-        this.setVertices(this.vertices);
-    }
-
-    setVertices(vertices) {
-        this.vertices = vertices;
-        const verticesAttrib = this.material.vertexPositionAttrib();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.verticesBuffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.vertices), this.gl.STATIC_DRAW);
-        this.gl.vertexAttribPointer(verticesAttrib, 3, this.gl.FLOAT, false, 0, 0);
+        this.count = 0;
     }
 
     draw({ matrix }) {
+        // bind buffers
+        for (const name in this.buffers) {
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffers[name]);
+            const { type } = this.material.attribs[name];
+            const { element, size } = attribTypes[type];
+            this.gl.vertexAttribPointer(this.material.attrib(name), size, element, false, 0, 0);
+        }
+
         this.material.setModelViewProjectionMatrix(matrix);
-        this.gl.drawArrays(this.type, 0, this.vertices.length / 3);
+        this.gl.drawArrays(this.type, 0, this.count);
     }
 }
 
-class Quad2 extends Mesh {
-    constructor(gl, material, x0, y0, x1, y1) {
-        super(gl, material, gl.TRIANGLE_FAN, [x0, y0, 0, x1, y0, 0, x1, y1, 0, x0, y1, 0]);
-    }
-}
-
-export { Visible, Mesh, Quad2 };
+export { Visible, Mesh };

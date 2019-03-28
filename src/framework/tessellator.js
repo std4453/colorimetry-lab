@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { Visible } from './mesh';
+import { Visible, Mesh } from './mesh';
+import { attribTypes } from './utils';
 
 const { defaults } = _;
 
@@ -17,104 +18,61 @@ const typeToDetails = {
 };
 
 class Tessellator {
-    constructor(material, arrays = []) {
+    constructor(gl, material) {
+        this.gl = gl;
         this.material = material;
-        this.definitions = [
-            {
-                name: 'position',
-                attrib: material.vertexPositionAttrib(),
-                count: 3,
-                usage: 'STATIC_DRAW',
-                ...typeToDetails.float,
-            },
-            ...arrays
-                .map(el => defaults(el, defaultDefinition))
-                .map(({ name, type, ...rest }) => ({
-                    name,
-                    attrib: material.attrib(name),
-                    ...typeToDetails[type],
-                    ...rest,
-                })),
-        ];
         this.arrays = {};
-        for (const { name } of this.definitions) {
-            this[name] = (...data) => {
-                this.arrays[name].push(...data);
-                return this;
-            };
+        this.indices = {};
+        this.length = 0;
+
+        for (const name in this.material.attribs) this.setupAttrib(name);
+    }
+
+    setupAttrib(name) {
+        this.arrays[name] = [];
+        this.indices[name] = 0;
+
+        this[name] = (...data) => {
+            this.sychronize(this.indices[name]);
+            ++this.indices[name];
+            this.length = Math.max(this.length, this.indices[name]);
+            this.tessellate(name, data);
+            return this;
+        };
+    }
+
+    tessellate(name, data) {
+        const { type } = this.material.attribs[name];
+        const { size, defaults } = attribTypes[type];
+
+        for (let i = 0; i < size; ++i) {
+            const el = data.length > i ? data[i] : defaults[i];
+            this.arrays[name].push(el);
         }
-        this.clear();
     }
 
-    clear() {
-        for (const { name } of this.definitions) this.arrays[name] = [];
-    }
-
-    enableArrays(gl) {
-        for (const { attrib } of this.definitions) gl.enableVertexAttribArray(attrib);
-    }
-
-    disableArrays(gl) {
-        for (const { attrib } of this.definitions) gl.disableVertexAttribArray(attrib);
-    }
-
-    begin() {}
-
-    end(gl, buffers = {}) {
-        this.material.use();
-        for (const { name, array: ActualArray, usage } of this.definitions) {
-            const buffer = name in buffers ? buffers[name] : gl.createBuffer(); // reuse buffers
-            buffers[name] = buffer;
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new ActualArray(this.arrays[name]), gl[usage]);
+    sychronize(index) {
+        for (const name in this.indices) {
+            while (this.indices[name] < index) {
+                this.tessellate(name, []); // fill with default values
+                ++this.indices[name];
+            }
         }
-        const count = this.arrays.position.length / 3;
-        this.clear();
-        return { count, buffers };
     }
 
-    loadBuffers(gl, buffers) {
-        this.material.use();
-        for (const { name, attrib, count, constant, normalize } of this.definitions) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffers[name]);
-            gl.vertexAttribPointer(attrib, count, gl[constant], normalize, 0, 0);
+    build(type) {
+        console.log(this.arrays, this.indices, this.length);
+        const mesh = new Mesh(this.gl, this.material, type);
+        for (const name in mesh.buffers) {
+            const { type } = this.material.attribs[name];
+            const { array: ActualArray } = attribTypes[type];
+
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, mesh.buffers[name]);
+            this.gl.bufferData(this.gl.ARRAY_BUFFER, new ActualArray(this.arrays[name]), this.gl.STATIC_DRAW);
         }
+        mesh.count = this.length;
+        return mesh;
     }
 }
 
-class TessellatedMesh extends Visible {
-    constructor(gl, material, type, arrays) {
-        super(gl, material);
-        this.tessellator = new Tessellator(material, arrays);
-        this.type = type;
-    }
-
-    initSelf() {
-        this.endTessellation();
-    }
-
-    beginTessellation() {
-        this.tessellator.enableArrays(this.gl);
-        this.tessellator.begin(this.gl);
-        return this.tessellator;
-    }
-
-    endTessellation() {
-        const { count, buffers } = this.tessellator.end(this.gl, this.buffers);
-        this.tessellator.disableArrays(this.gl);
-        this.buffers = buffers;
-        this.count = count;
-        return count;
-    }
-
-    draw({ matrix }) {
-        this.material.use();
-        this.material.setModelViewProjectionMatrix(matrix);
-        this.tessellator.enableArrays(this.gl);
-        this.tessellator.loadBuffers(this.gl, this.buffers);
-        this.gl.drawArrays(this.type, 0, this.count);
-        this.tessellator.disableArrays(this.gl);
-    }
-}
-
-export default TessellatedMesh;
+export default Tessellator;

@@ -84,13 +84,44 @@ class Material {
     constructor(gl, vsSource, fsSource) {
         this.gl = gl;
         this.program = loadProgram(gl, vsSource, fsSource);
+
+        this.attribCount = this.gl.getProgramParameter(this.program, this.gl.ACTIVE_ATTRIBUTES);
+        this.attribs = {};
+        for (let i = 0; i < this.attribCount; ++i) {
+            const { name, type, ...rest } = this.gl.getActiveAttrib(this.program, i);
+            const typeName = (
+                type === gl.FLOAT_VEC2 ? 'FLOAT_VEC2' : (
+                type === gl.FLOAT_VEC3 ? 'FLOAT_VEC3' : (
+                type === gl.FLOAT_VEC4 ? 'FLOAT_VEC4' : (
+                null))));
+            console.log(name, type);
+            this.attribs[name] = { type: typeName, ...rest };
+        }
+    }
+    
+    enableAttribs() {
+        for (const name in this.attribs) {
+            this.gl.enableVertexAttribArray(this.attrib(name));
+        }
+    }
+
+    disableAttribs() {
+        for (const name in this.attribs) {
+            this.gl.disableVertexAttribArray(this.attrib(name));
+        }
+    }
+
+    createBuffers() {
+        const buffers = {};
+        for (const name in this.attribs) {
+            buffers[name] = this.gl.createBuffer();
+        }
+        return buffers;
     }
 
     attrib(name) {
         this.use();
-        const location = this.gl.getAttribLocation(this.program, name);
-        this.gl.enableVertexAttribArray(location);
-        return location;
+        return this.gl.getAttribLocation(this.program, name);
     }
 
     uniform(name) {

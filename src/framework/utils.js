@@ -22,4 +22,26 @@ const loadProgram = (gl, vsSource, fsSource) => {
     return shaderProgram;
 };
 
-export { loadProgram };
+// TODO: unfinished
+const attribTypes = {
+    'FLOAT_VEC2': {
+        array: Float32Array,
+        size: 2,
+        element: 0x1406, // FLOAT
+        defaults: [0, 0],
+    },
+    'FLOAT_VEC3': {
+        array: Float32Array,
+        size: 3,
+        element: 0x1406, // FLOAT
+        defaults: [0, 0, 0],
+    },
+    'FLOAT_VEC4': {
+        array: Float32Array,
+        size: 4,
+        element: 0x1406, // FLOAT
+        defaults: [0, 0, 0, 1],
+    },
+};
+
+export { loadProgram, attribTypes };
