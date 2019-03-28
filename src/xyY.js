@@ -44,6 +44,7 @@ const xyY = async ({ gl }) => {
     }
     
     {
+        const vY = 0.3;
         const startWL = 390, endWL = 750, step = 0.1;
         const material = new Drei.Material(vsSource, fsSource);
         const uXYZ2sRGB = material.uniform('u_XYZ2sRGB');
@@ -54,14 +55,12 @@ const xyY = async ({ gl }) => {
         );
         mat3.transpose(mat, mat);
         gl.uniformMatrix3fv(uXYZ2sRGB, false, mat);
-        const uY = material.uniform('u_Y');
-        gl.uniform1f(uY, 0.3);
 
         const t = new Drei.Tessellator(material);
         for (let i = startWL; i <= endWL; i += step) {
             const { X, Y, Z } = wave_length_to_xyz(i);
             const x = X / (X + Y + Z), y = Y / (X + Y + Z);
-            t.v_pos(x * width, y * height, 0).v_xy(x, y);
+            t.v_pos(x * width, y * height, 0).v_xyY(x, y, vY);
         }
         const contour = t.build(gl.TRIANGLE_FAN);
         mat4.translate(contour.matrix, contour.matrix, [-width / 2, -height / 2, 0]);
