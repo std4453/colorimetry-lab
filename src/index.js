@@ -11,5 +11,5 @@ const programs = { xyY, gamma };
         alert("Unable to initialize WebGL. Your browser or machine may not support it.");
     }
 
-    programs.xyY({ canvas, gl });
+    programs.gamma({ canvas, gl });
 })();

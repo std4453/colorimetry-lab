@@ -1,12 +1,15 @@
 import { mat3 } from 'gl-matrix';
 import { Material } from './drei/classes';
 
-import xyYvs from './shaders/xyY.vert';
-import xyYfs from './shaders/xyY.frag';
+import v_xyY from './shaders/xyY.vert';
+import f_xyY from './shaders/xyY.frag';
+import v_sRGB from './shaders/sRGB.vert';
+import f_corrected from './shaders/corrected.frag';
+import f_uncorrected from './shaders/uncorrected.frag';
 
 class CIE1931xyYMaterial extends Material {
     constructor(gl) {
-        super(gl, xyYvs, xyYfs);
+        super(gl, v_xyY, f_xyY);
         const uXYZ2sRGB = this.uniform('u_XYZ2sRGB');
         const mat = mat3.fromValues(
             3.2406, -1.5372, -0.4986,
@@ -18,6 +21,18 @@ class CIE1931xyYMaterial extends Material {
     }
 }
 
-const materialClasses = { CIE1931xyYMaterial };
+class UncorrectedsRGBMaterial extends Material {
+    constructor(gl) {
+        super(gl, v_sRGB, f_uncorrected);
+    }
+}
+
+class CorrectedsRGBMaterial extends Material {
+    constructor(gl) {
+        super(gl, v_sRGB, f_corrected);
+    }
+}
+
+const materialClasses = { CIE1931xyYMaterial, UncorrectedsRGBMaterial, CorrectedsRGBMaterial };
 
 export default materialClasses;

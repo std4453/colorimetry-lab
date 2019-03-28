@@ -44,8 +44,8 @@ const xyY = async ({ gl }) => {
     {
         const vY = 0.3;
         const startWL = 390, endWL = 750, step = 0.1;
+        
         const material = new Drei.CIE1931xyYMaterial();
-
         const t = new Drei.Tessellator(material);
         for (let i = startWL; i <= endWL; i += step) {
             const { X, Y, Z } = wave_length_to_xyz(i);

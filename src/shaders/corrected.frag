@@ -1,6 +1,6 @@
 precision mediump float;
 
-varying vec4 color;
+varying vec4 f_sRGB;
 
 vec3 gamma_correct(vec3 raw) {
     bvec3 thres = lessThan(raw, vec3(0.0031308));
@@ -10,5 +10,5 @@ vec3 gamma_correct(vec3 raw) {
 }
 
 void main() {
-    gl_FragColor = vec4(gamma_correct(color.rgb), color.a);
+    gl_FragColor = vec4(gamma_correct(f_sRGB.rgb), f_sRGB.a);
 }
