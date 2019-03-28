@@ -1,5 +1,4 @@
 import load from './load';
-import useMemo from './cache';
 
 const zero = { X: 0, Y: 0, Z: 0 };
 const snap = wl => Math.floor(wl * 10);
@@ -17,7 +16,7 @@ const loadData = async () => {
 };
 
 const async_wave_length_to_xyz = async () => {
-    const data = await useMemo('wave_length:data', loadData);
+    const data = await loadData();
     return (wl) => {
         const snapped = snap(wl);
         const { X: X1, Y: Y1, Z: Z1 } = data[snapped] || zero;
