@@ -45,7 +45,6 @@ class Tessellator {
     }
 
     build(type) {
-        console.log(this.arrays, this.indices, this.length);
         const mesh = new Mesh(this.gl, this.material, type);
         for (const name in mesh.buffers) {
             const { type } = this.material.attribs[name];

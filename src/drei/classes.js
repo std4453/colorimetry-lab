@@ -94,7 +94,6 @@ class Material {
                 type === gl.FLOAT_VEC3 ? 'FLOAT_VEC3' : (
                 type === gl.FLOAT_VEC4 ? 'FLOAT_VEC4' : (
                 null))));
-            console.log(name, type);
             this.attribs[name] = { type: typeName, ...rest };
         }
     }

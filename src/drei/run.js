@@ -7,7 +7,7 @@ const run = (gl, scene, update, options = {}) => {
         const ctx = { ...options, scene, frameCount, elapsed };
         scene.renderFrame(ctx);
         update(ctx);
-        // requestAnimationFrame(frame);
+        requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
 };
