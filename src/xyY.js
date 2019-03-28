@@ -1,6 +1,6 @@
 import { mat4, mat3 } from 'gl-matrix';
 
-import { Drei, run } from './drei';
+import { makeDrei, run } from './drei';
 
 import vsSource from './shaders/xyY.vert';
 import fsSource from './shaders/xyY.frag';
@@ -11,14 +11,15 @@ const xyY = async ({ gl }) => {
     const wave_length_to_xyz = await async_wave_length_to_xyz();
     const width = 400, height = 400;
     
-    const scene = new Drei.Scene(gl, { clearColor: [1, 1, 1, 1] });
+    const Drei = makeDrei(gl);
+    const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
     
     {
         const step = 0.1;
-        const material = new Drei.PureColorMaterial(gl);
+        const material = new Drei.PureColorMaterial();
         material.setColor(0.5, 0.5, 0.5);
 
-        const t = new Drei.Tessellator(gl, material);
+        const t = new Drei.Tessellator(material);
         for (let x = 0; x <= 1; x += step) {
             t
                 .vertexPosition(x * width, 0, 0)
@@ -44,7 +45,7 @@ const xyY = async ({ gl }) => {
     
     {
         const startWL = 390, endWL = 750, step = 0.1;
-        const material = new Drei.Material(gl, vsSource, fsSource);
+        const material = new Drei.Material(vsSource, fsSource);
         const uXYZ2sRGB = material.uniform('u_XYZ2sRGB');
         const mat = mat3.fromValues(
             3.2406, -1.5372, -0.4986,
@@ -56,7 +57,7 @@ const xyY = async ({ gl }) => {
         const uY = material.uniform('u_Y');
         gl.uniform1f(uY, 0.3);
 
-        const t = new Drei.Tessellator(gl, material);
+        const t = new Drei.Tessellator(material);
         for (let i = startWL; i <= endWL; i += step) {
             const { X, Y, Z } = wave_length_to_xyz(i);
             const x = X / (X + Y + Z), y = Y / (X + Y + Z);
@@ -67,7 +68,7 @@ const xyY = async ({ gl }) => {
         scene.root.addChild(contour);
     }
 
-    const camera = new Drei.HUDCamera(gl, -100, 100);
+    const camera = new Drei.HUDCamera(-100, 100);
     scene.root.addChild(camera);
     scene.camera = camera;
 
