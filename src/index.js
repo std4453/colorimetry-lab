@@ -1,5 +1,5 @@
 import '@babel/polyfill';
-import xyY from './xyY';
+import testgl from './testgl';
 
 (() => {
     const canvas = document.querySelector('#canvas');
@@ -8,5 +8,5 @@ import xyY from './xyY';
         alert("Unable to initialize WebGL. Your browser or machine may not support it.");
     }
 
-    xyY({ canvas, gl });
+    testgl({ canvas, gl });
 })();
