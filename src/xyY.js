@@ -15,7 +15,6 @@ const xyY = async ({ gl }) => {
     {
         const step = 0.1;
         const material = new Drei.PureColorMaterial();
-        material.setColor(0.5, 0.5, 0.5);
 
         const t = new Drei.Tessellator(material);
         for (let x = 0; x <= 1; x += step) {
@@ -37,6 +36,7 @@ const xyY = async ({ gl }) => {
                 .vertexPosition(0, y * height, 0);
         }
         const bg = t.build(gl.TRIANGLES);
+        bg.uniforms.color = [0.5, 0.5, 0.5];
         mat4.translate(bg.matrix, bg.matrix, [-width / 2, -height / 2, -1]);
         scene.root.addChild(bg);
     }
