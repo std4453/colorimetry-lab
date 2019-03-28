@@ -16,14 +16,8 @@ const defaultSettings = {
 class Scene {
     constructor(gl, settings = {}) {
         this.gl = gl;
-
-        this.settings = defaults(settings, defaultSettings);
-
         this.root = new Node(gl);
-        this.camera = null;
-    }
-
-    init() {
+        this.settings = defaults(settings, defaultSettings);
         for (const key in this.settings) {
             const value = this.settings[key];
             if (key in specialEntries) specialEntries[key](this.gl, value);
@@ -33,15 +27,14 @@ class Scene {
                 else this.gl[key](value);
             }
         }
-        this.root.init();
     }
 
-    renderFrame(ctx) {
+    render(ctx, camera) {
         let clearBits = this.gl.COLOR_BUFFER_BIT;
         if (this.settings.depthEnabled) clearBits |= this.gl.DEPTH_BUFFER_BIT;
         this.gl.clear(clearBits);
 
-        this.camera.renderTree({ ...ctx, gl: this.gl }, this.root);
+        camera.renderTree({ ...ctx, gl: this.gl }, this.root);
     }
 }
 

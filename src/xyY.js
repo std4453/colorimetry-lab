@@ -1,6 +1,6 @@
 import { mat4, mat3 } from 'gl-matrix';
 
-import { Drei, run } from './framework';
+import { Drei, run } from './drei';
 
 import vsSource from './shaders/xyY.vert';
 import fsSource from './shaders/xyY.frag';
@@ -71,7 +71,7 @@ const xyY = async ({ gl }) => {
     scene.root.addChild(camera);
     scene.camera = camera;
 
-    run(gl, scene, () => { });
+    run(gl, scene, camera, () => { });
 };
 
 export default xyY;

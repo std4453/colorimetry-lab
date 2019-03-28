@@ -1,6 +1,6 @@
 import { mat4 } from 'gl-matrix';
 
-import { Drei, run } from './framework';
+import { Drei, run } from './drei';
 
 import colored from './shaders/colored.vert';
 import gamma_corrected from './shaders/gamma_corrected.frag';
@@ -47,7 +47,7 @@ const gamma = ({ gl }) => {
     scene.root.addChild(camera);
     scene.camera = camera;
 
-    run(gl, scene, () => {});
+    run(gl, scene, camera, () => {});
 };
 
 export default gamma;

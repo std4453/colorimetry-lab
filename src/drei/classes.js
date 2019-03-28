@@ -8,13 +8,6 @@ class Node {
         this.children = [];
     }
 
-    init() {
-        this.initSelf();
-        for (const child of this.children) child.init();
-    }
-
-    initSelf() { }
-
     addChild(child) {
         this.children.push(child);
         child.parent = this;
@@ -57,10 +50,6 @@ class Camera extends Node {
     constructor(gl) {
         super(gl);
         this.projectionMatrix = mat4.create();
-    }
-
-    initSelf() {
-        this.updateMatrix();
     }
 
     updateMatrix() { }
