@@ -1,21 +1,5 @@
-import _ from 'lodash';
 import { Mesh } from './classes';
 import { attribTypes } from './utils';
-
-const { defaults } = _;
-
-const defaultDefinition = {
-    type: 'float',
-    usage: 'STATIC_DRAW',
-    normalize: false,
-};
-
-const typeToDetails = {
-    float: {
-        array: Float32Array,
-        constant: 'FLOAT',
-    },
-};
 
 class Tessellator {
     constructor(gl, material) {
