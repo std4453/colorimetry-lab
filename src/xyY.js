@@ -14,7 +14,7 @@ const xyY = async ({ gl }) => {
     
     {
         const step = 0.1;
-        const material = new Drei.PureColorMaterial();
+        const material = new Drei.MonosRGBMaterial();
 
         const t = new Drei.Tessellator(material);
         for (let x = 0; x <= 1; x += step) {

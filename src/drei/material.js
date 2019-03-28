@@ -1,11 +1,11 @@
 import { Material } from './classes';
-import fragPure from '../shaders/pure.frag';
-import vertTransform from '../shaders/transform.vert';
+import fragPure from '../shaders/sRGB_mono.frag';
+import vertTransform from '../shaders/uncorrected.vert';
 
-class PureColorMaterial extends Material {
+class MonosRGBMaterial extends Material {
     constructor(gl) {
         super(gl, vertTransform, fragPure);
     }
 }
 
-export { PureColorMaterial };
+export { MonosRGBMaterial };
