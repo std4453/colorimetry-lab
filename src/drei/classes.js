@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import { loadProgram, attribTypes } from './utils';
+import { loadProgram, attribTypes, uniformTypes } from './utils';
 
 class Node {
     constructor(gl) {
@@ -78,12 +78,16 @@ class Material {
         this.attribs = {};
         for (let i = 0; i < this.attribCount; ++i) {
             const { name, type, ...rest } = this.gl.getActiveAttrib(this.program, i);
-            const typeName = (
-                type === gl.FLOAT_VEC2 ? 'FLOAT_VEC2' : (
-                type === gl.FLOAT_VEC3 ? 'FLOAT_VEC3' : (
-                type === gl.FLOAT_VEC4 ? 'FLOAT_VEC4' : (
-                null))));
+            const typeName = Object.keys(attribTypes).find(key => gl[key] === type);
             this.attribs[name] = { type: typeName, ...rest };
+        }
+
+        this.uniformCount = this.gl.getProgramParameter(this.program, this.gl.ACTIVE_UNIFORMS);
+        this.uniforms = {};
+        for (let i = 0; i < this.uniformCount; ++i) {
+            const { name, type, ...rest } = this.gl.getActiveUniform(this.program, i);
+            const typeName = Object.keys(uniformTypes).find(key => gl[key] === type);
+            this.uniforms[name] = { type: typeName, ...rest };
         }
     }
     
@@ -117,16 +121,10 @@ class Material {
         return this.gl.getUniformLocation(this.program, name);
     }
 
-    vertexPositionAttrib() {
-        return this.attrib('vertexPosition');
-    }
+    setUniforms() {
+        for (const key in this.uniforms) {
 
-    modelViewProjectionMatrixUniform() {
-        return this.uniform('modelViewProjectionMatrix');
-    }
-
-    setModelViewProjectionMatrix(matrix) {
-        this.gl.uniformMatrix4fv(this.modelViewProjectionMatrixUniform(), false, matrix);
+        }
     }
 
     use() {
@@ -156,9 +154,25 @@ class Mesh extends Visible {
         this.buffers = this.material.createBuffers();
         this.type = type;
         this.count = 0;
+        this.uniforms = {};
     }
 
     draw({ matrix }) {
+        this.uniforms.modelViewProjectionMatrix = matrix;
+
+        // set uniforms
+        for (const name in this.uniforms) {
+            if (!(name in this.material.uniforms)) {
+                console.warn(`Uniform '${name}' undefined!`);
+                continue;
+            }
+            const { type } = this.material.uniforms[name];
+            const { setter, defaults, params } = uniformTypes[type];
+            const value = defaults.map((d, i) => 
+                this.uniforms[name].length > i ? this.uniforms[name][i] : d);
+            this.gl[setter](this.material.uniform(name), ...params, value);
+        }
+
         // bind buffers
         for (const name in this.buffers) {
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffers[name]);
@@ -167,7 +181,6 @@ class Mesh extends Visible {
             this.gl.vertexAttribPointer(this.material.attrib(name), size, element, false, 0, 0);
         }
 
-        this.material.setModelViewProjectionMatrix(matrix);
         this.gl.drawArrays(this.type, 0, this.count);
     }
 }

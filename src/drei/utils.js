@@ -44,4 +44,43 @@ const attribTypes = {
     },
 };
 
-export { loadProgram, attribTypes };
+const uniformTypes = {
+    'FLOAT_VEC2': {
+        setter: 'uniform2fv',
+        size: 2,
+        defaults: [0, 0],
+        params: [],
+    },
+    'FLOAT_VEC3': {
+        setter: 'uniform3fv',
+        size: 3,
+        defaults: [0, 0, 0],
+        params: [],
+    },
+    'FLOAT_VEC4': {
+        setter: 'uniform4fv',
+        size: 4,
+        defaults: [0, 0, 0, 1],
+        params: [],
+    },
+    'FLOAT_MAT2': {
+        setter: 'uniformMatrix2fv',
+        size: 4,
+        defaults: [0, 0, 0, 0],
+        params: [false],
+    },
+    'FLOAT_MAT3': {
+        setter: 'uniformMatrix3fv',
+        size: 9,
+        defaults: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        params: [false],
+    },
+    'FLOAT_MAT4': {
+        setter: 'uniformMatrix4fv',
+        size: 16,
+        defaults: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        params: [false],
+    },
+};
+
+export { loadProgram, attribTypes, uniformTypes };

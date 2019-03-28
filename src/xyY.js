@@ -1,4 +1,4 @@
-import { mat4, mat3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 
 import { makeDrei, run } from './drei';
 import materialClasses from './materials';
@@ -44,7 +44,7 @@ const xyY = async ({ gl }) => {
     {
         const vY = 0.3;
         const startWL = 390, endWL = 750, step = 0.1;
-        
+
         const material = new Drei.CIE1931xyYMaterial();
         const t = new Drei.Tessellator(material);
         for (let i = startWL; i <= endWL; i += step) {
