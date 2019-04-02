@@ -12,7 +12,6 @@ const xyY = async ({ gl }) => {
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
 
-
     const colors = new Drei.Tessellator(new Drei.CIE1931xyYMaterial())
         .v_pos(0, 0).v_xy(0, 0)
         .v_pos(0, width).v_xy(0, 1)
