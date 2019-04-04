@@ -1,7 +1,7 @@
 import { mat4 } from 'gl-matrix';
 
-import { makeDrei, run } from './drei';
-import materialClasses from './materials';
+import { makeDrei, run } from '../drei';
+import materialClasses from '../materials';
 
 const shades = ({ gl }) => {
     const Drei = makeDrei(gl, materialClasses);

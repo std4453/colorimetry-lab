@@ -1,9 +1,9 @@
 import { mat4 } from 'gl-matrix';
 
-import { makeDrei, run } from './drei';
-import materialClasses from './materials';
+import { makeDrei, run } from '../drei';
+import materialClasses from '../materials';
 
-import async_wave_length_to_xyz from './wave_length';
+import async_wave_length_to_xyz from '../wave_length';
 
 const xyY = async ({ gl }) => {
     const wave_length_to_xyz = await async_wave_length_to_xyz();

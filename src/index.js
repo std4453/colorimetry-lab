@@ -3,9 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Canvas from './canvas';
-import xyY from './xyY';
-import gamma from './gamma';
-import shades from './shades';
+import xyY from './components/xyY';
+import gamma from './components/gamma';
+import shades from './components/shades';
 
 const programs = { xyY, gamma, shades };
 ReactDOM.render(
