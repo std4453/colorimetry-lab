@@ -1,8 +1,9 @@
 import '@babel/polyfill';
 import xyY from './xyY';
 import gamma from './gamma';
+import shades from './shades';
 
-const programs = { xyY, gamma };
+const programs = { xyY, gamma, shades };
 
 (() => {
     const canvas = document.querySelector('#canvas');
@@ -11,5 +12,5 @@ const programs = { xyY, gamma };
         alert("Unable to initialize WebGL. Your browser or machine may not support it.");
     }
 
-    programs.gamma({ canvas, gl });
+    programs.shades({ canvas, gl });
 })();

@@ -24,6 +24,12 @@ const loadProgram = (gl, vsSource, fsSource) => {
 
 // TODO: unfinished
 const attribTypes = {
+    'FLOAT': {
+        array: Float32Array,
+        size: 1,
+        element: 0x1406, // FLOAT
+        defaults: [0],
+    },
     'FLOAT_VEC2': {
         array: Float32Array,
         size: 2,

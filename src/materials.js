@@ -7,6 +7,9 @@ import v_sRGB from './shaders/sRGB.vert';
 import v_sRGB_mono from './shaders/sRGB_mono.vert';
 import f_corrected from './shaders/sRGB_corrected.frag';
 import f_uncorrected from './shaders/sRGB_uncorrected.frag';
+import v_grayscale from './shaders/grayscale.vert';
+import f_grayscale from './shaders/grayscale.frag';
+import f_grayscale_dither from './shaders/grayscale_dither.frag';
 
 class CIE1931xyYMaterial extends Material {
     constructor(gl) {
@@ -40,11 +43,25 @@ class MonosRGBMaterial extends Material {
     }
 }
 
+class GrayscaleMaterial extends Material {
+    constructor(gl) {
+        super(gl, v_grayscale, f_grayscale);
+    }
+}
+
+class DitheredGrayscaleMaterial extends Material {
+    constructor(gl) {
+        super(gl, v_grayscale, f_grayscale_dither);
+    }
+}
+
 const materialClasses = {
     CIE1931xyYMaterial,
     UncorrectedsRGBMaterial,
     CorrectedsRGBMaterial,
     MonosRGBMaterial,
+    GrayscaleMaterial,
+    DitheredGrayscaleMaterial,
 };
 
 export default materialClasses;
