@@ -16,7 +16,10 @@ export default {
     },
     plugins: [
         builtins(),
-        resolve({ preferBuiltins: false }),
+        resolve({
+            preferBuiltins: false,
+            extensions: [ '.js', '.jsx', '.json' ],
+        }),
         commonjs(),
         globals(),
         glslify({ basedir: 'src/shaders' }),
