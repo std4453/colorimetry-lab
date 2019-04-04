@@ -1,7 +1,7 @@
 import React from 'react';
 const { useRef, useEffect } = React;
 
-function Canvas({ children }) {
+function Canvas({ children, ...rest }) {
     const ref = useRef();
     useEffect(() => {
         const { current: canvas } = ref;
@@ -14,7 +14,7 @@ function Canvas({ children }) {
         children({ canvas, gl });
     }, [ref.current]);
     return (
-        <canvas ref={ref} width="1200" height="600"></canvas>
+        <canvas ref={ref} {...rest}></canvas>
     );
 }
 

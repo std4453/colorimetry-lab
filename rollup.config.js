@@ -6,7 +6,7 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import glslify from 'rollup-plugin-glslify';
 import babel from 'rollup-plugin-babel';
-import { uglify } from 'rollup-plugin-uglify';
+// import { uglify } from 'rollup-plugin-uglify';
 
 export default {
     input: 'src/index.js',
@@ -25,7 +25,7 @@ export default {
         glslify({ basedir: 'src/shaders' }),
         babel({ exclude: 'node_modules/**' }),
         // uglify(),
-        livereload(),
+        livereload({ watch: 'dist' }),
         serve(),
     ],
 };

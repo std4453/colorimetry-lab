@@ -48,7 +48,7 @@ const xyY = async ({ gl }) => {
 
 function CIExyY() {
     return (
-        <Canvas>{xyY}</Canvas>
+        <Canvas width={1200} height={600}>{xyY}</Canvas>
     )
 }
 

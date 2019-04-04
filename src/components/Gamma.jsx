@@ -78,7 +78,7 @@ const gamma = ({ gl }) => {
 
 function Gamma() {
     return (
-        <Canvas>{gamma}</Canvas>
+        <Canvas width={1200} height={600}>{gamma}</Canvas>
     )
 }
 
