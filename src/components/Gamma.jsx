@@ -1,5 +1,7 @@
+import React from 'react';
 import { mat4 } from 'gl-matrix';
 
+import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
 import materialClasses from '../materials';
 
@@ -74,4 +76,10 @@ const gamma = ({ gl }) => {
     run(gl, scene, camera, () => {});
 };
 
-export default gamma;
+function Gamma() {
+    return (
+        <Canvas>{gamma}</Canvas>
+    )
+}
+
+export default Gamma;

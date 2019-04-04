@@ -11,7 +11,7 @@ function Canvas({ children }) {
             console.error("Unable to initialize WebGL.");
             return;
         }
-        return children({ canvas, gl });
+        children({ canvas, gl });
     }, [ref.current]);
     return (
         <canvas ref={ref} width="1200" height="600"></canvas>

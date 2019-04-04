@@ -1,5 +1,7 @@
+import React from 'react';
 import { mat4 } from 'gl-matrix';
 
+import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
 import materialClasses from '../materials';
 
@@ -44,4 +46,10 @@ const xyY = async ({ gl }) => {
     });
 };
 
-export default xyY;
+function CIExyY() {
+    return (
+        <Canvas>{xyY}</Canvas>
+    )
+}
+
+export default CIExyY;
