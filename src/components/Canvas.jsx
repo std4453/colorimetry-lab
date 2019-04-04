@@ -1,7 +1,7 @@
 import React from 'react';
 const { useRef, useEffect } = React;
 
-function Canvas({ program }) {
+function Canvas({ children }) {
     const ref = useRef();
     useEffect(() => {
         const { current: canvas } = ref;
@@ -11,7 +11,7 @@ function Canvas({ program }) {
             console.error("Unable to initialize WebGL.");
             return;
         }
-        program({ canvas, gl });
+        return children({ canvas, gl });
     }, [ref.current]);
     return (
         <canvas ref={ref} width="1200" height="600"></canvas>

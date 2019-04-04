@@ -1,5 +1,7 @@
+import React from 'react';
 import { mat4 } from 'gl-matrix';
 
+import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
 import materialClasses from '../materials';
 
@@ -53,4 +55,10 @@ const shades = ({ gl }) => {
     run(gl, scene, camera, () => { });
 };
 
-export default shades;
+function Shades() {
+    return (
+        <Canvas>{shades}</Canvas>
+    )
+}
+
+export default Shades;
