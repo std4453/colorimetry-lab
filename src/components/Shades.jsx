@@ -29,10 +29,10 @@ const shades = ({ canvas, gl }) => {
         const material = new Drei.DitheredGrayscaleMaterial();
         const t = new Drei.Tessellator(material);
         t
-            .v_pos(0, 0, 0).v_gray(0)
-            .v_pos(barWidth, 0, 0).v_gray(0)
-            .v_pos(barWidth, barHeight, 0).v_gray(1)
-            .v_pos(0, barHeight, 0).v_gray(1)
+            .v_pos(0, 0, 0).v_gray(0).v_tex(0, 0)
+            .v_pos(barWidth, 0, 0).v_gray(0).v_tex(1, 0)
+            .v_pos(barWidth, barHeight, 0).v_gray(1).v_tex(1, 1)
+            .v_pos(0, barHeight, 0).v_gray(1).v_tex(0, 1)
         const rect = t.build(gl.TRIANGLE_FAN);
         mat4.translate(rect.matrix, rect.matrix, [-barWidth * 0.5, -barHeight * 0.5, 0]);
         scene.root.addChild(rect);
@@ -42,10 +42,10 @@ const shades = ({ canvas, gl }) => {
         const material = new Drei.GrayscaleMaterial();
         const t = new Drei.Tessellator(material);
         t
-            .v_pos(0, 0, 0).v_gray(0)
-            .v_pos(barWidth, 0, 0).v_gray(0)
-            .v_pos(barWidth, barHeight, 0).v_gray(1)
-            .v_pos(0, barHeight, 0).v_gray(1)
+            .v_pos(0, 0, 0).v_gray(0).v_tex(0, 0)
+            .v_pos(barWidth, 0, 0).v_gray(0).v_tex(1, 0)
+            .v_pos(barWidth, barHeight, 0).v_gray(1).v_tex(1, 1)
+            .v_pos(0, barHeight, 0).v_gray(1).v_tex(0, 1)
         const rect = t.build(gl.TRIANGLE_FAN);
         mat4.translate(rect.matrix, rect.matrix, [barWidth * 0.5, -barHeight * 0.5, 0]);
         scene.root.addChild(rect);
@@ -56,31 +56,29 @@ const shades = ({ canvas, gl }) => {
     scene.camera = camera;
 
     run(gl, scene, camera, () => { });
-};
+}
+
+function ShadeBars({ scale }) {
+    return (
+        <div style={{ width: 400, height: 600, overflow: 'hidden' }}>
+            <Canvas
+                width={400 * scale}
+                height={600 * scale}
+                style={{
+                    transform: `scale(${1 / scale})`,
+                    transformOrigin: '0 0',
+                }}
+            >{shades}</Canvas>
+        </div>
+    );
+}
 
 function Shades() {
     const scale = window.devicePixelRatio;
     return (
         <>
-            <div style={{ width: 400, height: 600, overflow: 'hidden' }}>
-                <Canvas
-                    width={800}
-                    height={1200}
-                    style={{
-                        transform: `scale(${1 / scale})`,
-                        transformOrigin: '0 0',
-                    }}
-                >{shades}</Canvas>
-            </div>
-            <div style={{ width: 400, height: 600, overflow: 'hidden' }}>
-                <Canvas
-                    width={400}
-                    height={600}
-                    style={{
-                        transformOrigin: '0 0',
-                    }}
-                >{shades}</Canvas>
-            </div>
+            <ShadeBars scale={scale}/>
+            <ShadeBars scale={scale / 2}/>
         </>
     );
 }
