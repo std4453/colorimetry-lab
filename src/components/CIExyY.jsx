@@ -96,15 +96,7 @@ const xyY = async ({ canvas, gl }) => {
     scene.root.addChild(camera);
     scene.camera = camera;
 
-    const options = {
-        Y: 0.5,
-    };
-    
-    // gui.add(options, 'Y', 0, 1);
-
-    run(gl, scene, camera, () => {
-        // colors.uniforms.u_Y = [options.Y];
-    });
+    run(gl, scene, camera, () => {});
 };
 
 function CIExyY() {

@@ -6,6 +6,7 @@ class Node {
         this.gl = gl;
         this.matrix = mat4.create();
         this.children = [];
+        this.visible = true;
     }
 
     addChild(child) {
@@ -18,6 +19,10 @@ class Node {
         if (index === -1) return;
         this.children.splice(index, 1);
         child.parent = null;
+    }
+
+    remove() {
+        if (this.parent) this.parent.removeChild(this);
     }
 
     getModelMatrix() {
@@ -33,8 +38,10 @@ class Node {
         mat4.multiply(newMat, matrix, this.matrix);
         const newContext = { ...ctx, matrix: newMat };
 
-        this.renderSelf(newContext);
-        for (const child of this.children) child.render(newContext);
+        if (this.visible) {
+            this.renderSelf(newContext);
+            for (const child of this.children) child.render(newContext);
+        }
     }
 
     renderSelf() { }

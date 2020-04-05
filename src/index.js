@@ -2,9 +2,9 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CIExyY from './components/CIExyY';
+import Projection from './components/Projection';
 
 ReactDOM.render(
-    React.createElement(CIExyY),
+    React.createElement(Projection),
     document.getElementById('container'),
 );
