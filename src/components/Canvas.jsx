@@ -11,7 +11,10 @@ function Canvas({ children, ...rest }) {
             console.error("Unable to initialize WebGL.");
             return;
         }
-        children({ canvas, gl });
+        const unloadListeners = [];
+        const addUnloadListener = l => unloadListeners.push(l);
+        children({ canvas, gl, addUnloadListener });
+        return () => unloadListeners.forEach(l => l());
     }, [ref.current]);
     return (
         <canvas ref={ref} {...rest}></canvas>

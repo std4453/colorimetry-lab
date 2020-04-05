@@ -9,6 +9,9 @@ import babel from 'rollup-plugin-babel';
 import { string } from "rollup-plugin-string";
 // import { uglify } from 'rollup-plugin-uglify';
 
+import react from 'react';
+import reactDom from 'react-dom';
+
 export default {
     input: 'src/index.js',
     output: {
@@ -21,7 +24,12 @@ export default {
             preferBuiltins: false,
             extensions: [ '.js', '.jsx', '.json' ],
         }),
-        commonjs(),
+        commonjs({
+            namedExports: {
+                react: Object.keys(react),
+                'react-dom': Object.keys(reactDom),
+            }
+        }),
         globals(),
         glslify({ basedir: 'src/shaders' }),
         string({ include: '**/*.csv' }),

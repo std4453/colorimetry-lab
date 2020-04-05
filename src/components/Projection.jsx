@@ -26,7 +26,7 @@ const convertions = {
     },
 };
 
-const proj = ({ canvas, gl }) => {
+const proj = ({ canvas, gl, addUnloadListener }) => {
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
     
@@ -167,6 +167,7 @@ const proj = ({ canvas, gl }) => {
         if (convex) convex.remove();
         generateConvex();
     });
+    addUnloadListener(() => gui.destroy());
 
     run(gl, scene, camera, () => {
         controls.update();

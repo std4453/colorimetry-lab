@@ -35,7 +35,7 @@ const centers = {
     D50: { X: 96.42 / 100, Y: 100.00 / 100, Z: 82.51 / 100 },
 };
 
-const chromatic = async ({ canvas, gl }) => {
+const chromatic = async ({ canvas, gl, addUnloadListener }) => {
     const { width, height } = canvas;
     
     const Drei = makeDrei(gl, materialClasses);
@@ -153,6 +153,7 @@ const chromatic = async ({ canvas, gl }) => {
     gui.add(options, 'to', Object.keys(targets)).onChange(regenerate);
     gui.add(options, 'center', Object.keys(centers)).onChange(regenerate);
     gui.add(options, 'steps', 5, 500, 1).onChange(regenerate);
+    addUnloadListener(() => gui.destroy());
 
     run(gl, scene, camera, () => {
         specLoc.visible = options.specLoc;

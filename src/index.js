@@ -2,9 +2,9 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Chromatic from './components/Chromatic';
+import App from './App';
 
 ReactDOM.render(
-    React.createElement(Chromatic),
+    React.createElement(App),
     document.getElementById('container'),
 );

@@ -73,7 +73,7 @@ function ShadeBars({ scale }) {
     );
 }
 
-function Shades() {
+function GammaCorrection() {
     const scale = window.devicePixelRatio;
     return (
         <>
@@ -83,4 +83,4 @@ function Shades() {
     );
 }
 
-export default Shades;
+export default GammaCorrection;
