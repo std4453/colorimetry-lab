@@ -1,5 +1,6 @@
 import React from 'react';
 import { mat4 } from 'gl-matrix';
+import * as dat from 'dat.gui';
 
 import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
@@ -40,9 +41,14 @@ const xyY = async ({ gl }) => {
     scene.root.addChild(camera);
     scene.camera = camera;
 
+    const options = {
+        Y: 0.5,
+    };
+    const gui = new dat.GUI();
+    gui.add(options, 'Y', 0, 1);
+
     run(gl, scene, camera, () => {
-        const time = Date.now();
-        colors.uniforms.u_Y = [Math.sin(time / 1000) * 0.5 + 0.5]
+        colors.uniforms.u_Y = [options.Y];
     });
 };
 

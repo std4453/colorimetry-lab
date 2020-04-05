@@ -2,9 +2,9 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Shades from './components/Shades';
+import CIExyY from './components/CIExyY';
 
 ReactDOM.render(
-    React.createElement(Shades),
+    React.createElement(CIExyY),
     document.getElementById('container'),
 );
