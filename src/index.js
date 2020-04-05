@@ -2,9 +2,9 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CIExyY from './components/CIExyY';
+import Chromatic from './components/Chromatic';
 
 ReactDOM.render(
-    React.createElement(CIExyY),
+    React.createElement(Chromatic),
     document.getElementById('container'),
 );

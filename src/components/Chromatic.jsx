@@ -35,7 +35,7 @@ const centers = {
     D50: { X: 96.42 / 100, Y: 100.00 / 100, Z: 82.51 / 100 },
 };
 
-const xyY = async ({ canvas, gl }) => {
+const chromatic = async ({ canvas, gl }) => {
     const { width, height } = canvas;
     
     const Drei = makeDrei(gl, materialClasses);
@@ -160,8 +160,8 @@ const xyY = async ({ canvas, gl }) => {
     });
 };
 
-function CIExyY() {
-    const scale = 2;
+function Chromatic() {
+    const scale = window.devicePixelRatio;
     return (
         <Canvas
             width={600 * scale}
@@ -169,8 +169,8 @@ function CIExyY() {
             style={{
                 transform: `scale(${1 / scale})`,
             }}
-        >{xyY}</Canvas>
-    )
+        >{chromatic}</Canvas>
+    );
 }
 
-export default CIExyY;
+export default Chromatic;
