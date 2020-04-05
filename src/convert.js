@@ -48,12 +48,49 @@ export const lms_to_xyz_ciecam97a = lms_to_xyz_matrix([[0.986992905467, -0.14705
 export const lms_to_xyz_ciecam97b = lms_to_xyz_matrix([[0.930752207661, -0.166680465649, 0.178557676521], [0.425125853562, 0.469465316214, 0.0797766065421], [-0.308880672076, 0.080619906613, 0.929585079439]])
 export const lms_to_xyz_ciecam02 = lms_to_xyz;
 
-function xyz_to_rgb(XYZ) {
-    const { X, Y, Z } = XYZ;
+function xyz_to_rgb({ X, Y, Z }) {
     const R = 0.41847 * X - 0.15866 * Y - 0.082835 * Z;
     const G = -0.091169 * X + 0.25243 * Y + 0.015708 * Z;
     const B = 0.00092090 * X - 0.0025498 * Y + 0.17860 * Z;
-    return { R: R, G: G, B: B };
+    return { R, G, B };
 }
 
 export { xyz_to_rgb };
+
+function xyz_to_sRGB_uncorrected({ X, Y, Z }) {
+    const R =  3.2406 * X + -1.5372 * Y + -0.4986 * Z;
+    const G = -0.9689 * X +  1.8758 * Y +  0.0415 * Z;
+    const B =  0.0557 * X + -0.2040 * Y +  1.0570 * Z;
+    return { R, G, B };
+}
+
+export { xyz_to_sRGB_uncorrected };
+
+function sRGB_uncorrected_to_xyz({ R, G, B }) {
+    const X = 0.4124 * R + 0.3576 * G + 0.1805 * B;
+    const Y = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+    const Z = 0.0193 * R + 0.1192 * G + 0.9505 * B;
+    return { X, Y, Z };
+};
+
+export { sRGB_uncorrected_to_xyz };
+
+function xyz_to_xyY({ X, Y, Z }) {
+    return { x: X / (X + Y + Z), y: Y / (X + Y + Z), Y };
+}
+
+export { xyz_to_xyY };
+
+function temp_to_xy(T) {
+    const x = T <= 4000
+        ? -0.2661239 * 1e9 / Math.pow(T, 3) - 0.2343589 * 1e6 / Math.pow(T, 2) + 0.8776956 * 1e3 / T + 0.179910
+        : -3.0258469 * 1e9 / Math.pow(T, 3) + 2.1070379 * 1e6 / Math.pow(T, 2) + 0.2226347 * 1e3 / T + 0.240390;
+    const y = T <= 2222
+        ? -1.1063814 * Math.pow(x, 3) - 1.34811020 * Math.pow(x, 2) + 2.18555832 * x - 0.20219683
+        : (T <= 4000
+        ? -0.9549476 * Math.pow(x, 3) - 1.37418593 * Math.pow(x, 2) + 2.09137015 * x - 0.16748867
+        : +3.0817580 * Math.pow(x, 3) - 5.87338670 * Math.pow(x, 2) + 3.75112997 * x - 0.37001483);
+    return { x, y };
+}
+
+export { temp_to_xy };
