@@ -36,6 +36,7 @@
     "lodash": "^4.17.11",
     "papaparse": "^4.6.3",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "rollup-plugin-string": "^3.0.0"
   }
 }

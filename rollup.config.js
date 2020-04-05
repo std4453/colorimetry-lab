@@ -6,6 +6,7 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import glslify from 'rollup-plugin-glslify';
 import babel from 'rollup-plugin-babel';
+import { string } from "rollup-plugin-string";
 // import { uglify } from 'rollup-plugin-uglify';
 
 export default {
@@ -23,6 +24,7 @@ export default {
         commonjs(),
         globals(),
         glslify({ basedir: 'src/shaders' }),
+        string({ include: '**/*.csv' }),
         babel({ exclude: 'node_modules/**' }),
         // uglify(),
         livereload({ watch: 'dist' }),

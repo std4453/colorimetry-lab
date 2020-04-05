@@ -1,3 +1,28 @@
+import papa from 'papaparse';
+import text from './assets/color_matching_functions.csv';
+
+const zero = { X: 0, Y: 0, Z: 0 };
+const snap = wl => Math.floor(wl * 10);
+const interpolate = wl => wl * 10 - Math.floor(wl * 10);
+
+const raw = papa.parse(text).data.map(arr => arr.map(n => parseFloat(n)));
+const data = [];
+for (const [wl, X, Y, Z] of raw) data[snap(wl)] = { X, Y, Z };
+
+function wave_length_to_xyz(wl) {
+    const snapped = snap(wl);
+    const { X: X1, Y: Y1, Z: Z1 } = data[snapped] || zero;
+    const { X: X2, Y: Y2, Z: Z2 } = data[snapped + 1] || zero;
+    const t = interpolate(wl);
+    return {
+        X: X2 * t + X1 * (1 - t),
+        Y: Y2 * t + Y1 * (1 - t),
+        Z: Z2 * t + Z1 * (1 - t),
+    };
+};
+
+export { wave_length_to_xyz };
+
 function xyz_to_lab(XYZ) {
     function f(t) {
         const delta = 6 / 29;

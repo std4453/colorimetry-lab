@@ -6,8 +6,7 @@ import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
 import materialClasses from '../materials';
 
-import async_wave_length_to_xyz from '../wave_length';
-import { sRGB_uncorrected_to_xyz, xyz_to_xyY, temp_to_xy } from '../convert';
+import { wave_length_to_xyz, sRGB_uncorrected_to_xyz, xyz_to_xyY, temp_to_xy } from '../convert';
 
 const xyY = async ({ canvas, gl }) => {
     const { width, height } = canvas;
@@ -15,7 +14,6 @@ const xyY = async ({ canvas, gl }) => {
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
     
-    const wave_length_to_xyz = await async_wave_length_to_xyz();
     const startWL = 390, endWL = 750, stepWL = 0.1;
     const startT = 1667, endT = 25000, stepT = 1;
 
