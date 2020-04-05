@@ -6,17 +6,22 @@ import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
 import materialClasses from '../materials';
 
-import { sRGB_uncorrected_to_xyz, xyz_to_xyY } from '../convert';
+import { sRGB_uncorrected_to_xyz, xyz_to_xyY, xyz_to_lab } from '../convert';
 
 const convertions = {
     sRGB: a => a,
-    xyz: ([R, G, B]) => {
+    CIEXYZ: ([R, G, B]) => {
         const { X, Y, Z } = sRGB_uncorrected_to_xyz({ R, G, B });
         return [X, Y, Z];
     },
-    xyY: ([R, G, B]) => {
+    CIExyY: ([R, G, B]) => {
         const { x, y, Y } = xyz_to_xyY(sRGB_uncorrected_to_xyz({ R, G, B }));
         return [x, Y, y];
+    },
+    CIELab: ([r, g, b]) => {
+        const { L, A, B } = xyz_to_lab(sRGB_uncorrected_to_xyz({ R: r, G: g, B: b }));
+        // normalize to [0, 1]^3
+        return [A / 256 + 0.5, L / 100, B / 256 + 0.5];
     },
 };
 
@@ -30,7 +35,7 @@ const proj = async ({ gl }) => {
         pos: 1.4,
         grid: true,
         convex: true,
-        to: 'xyz',
+        to: 'CIEXYZ',
     };
     gui.add(options, 'pos', 0.5, 2);
     gui.add(options, 'speed', -0.1, 0.1);

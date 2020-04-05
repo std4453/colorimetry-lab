@@ -26,14 +26,14 @@ export { wave_length_to_xyz };
 function xyz_to_lab(XYZ) {
     function f(t) {
         const delta = 6 / 29;
-        return t < Math.pow(delta, 3) ? Math.pow(t, 1 / 3) : t / (3 * delta * delta) + 4 / 29;
+        return t > Math.pow(delta, 3) ? Math.pow(t, 1 / 3) : t / (3 * delta * delta) + 4 / 29;
     }
     const { X, Y, Z } = XYZ;
-    const Xn = 95.047, Yn = 100.0, Zn = 108.883;
+    const Xn = 95.047 / 100, Yn = 100.0 / 100, Zn = 108.883 / 100;
     const L = 116 * f(Y / Yn) - 16;
     const A = 500 * (f(X / Xn) - f(Y / Yn));
     const B = 200 * (f(Y / Yn) - f(Z / Zn));
-    return { L: L, A: A, B: B };
+    return { L, A, B };
 }
 
 export { xyz_to_lab };
@@ -43,7 +43,7 @@ function xyz_to_lms(XYZ) {
     const L = 0.7328 * X + 0.4296 * Y - 0.1624 * Z;
     const M = -0.7036 * X + 1.6975 * Y + 0.0061 * Z;
     const S = 0.0030 * X + 0.0136 * Y + 0.9834 * Z;
-    return { L: L, M: M, S: S };
+    return { L, M, S };
 }
 
 export { xyz_to_lms };
