@@ -1,6 +1,7 @@
 import React from 'react';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import * as dat from 'dat.gui';
+import OrbitControls from 'orbit-controls';
 
 import Canvas from './Canvas';
 import { makeDrei, run } from '../drei';
@@ -25,31 +26,40 @@ const convertions = {
     },
 };
 
-const proj = async ({ gl }) => {
+const proj = ({ canvas, gl }) => {
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene({ clearColor: [1, 1, 1, 1] });
     
-    const gui = new dat.GUI();
     const options = {
-        speed: 0.015,
-        pos: 1.4,
-        grid: true,
+        grid: false,
         convex: true,
-        to: 'CIEXYZ',
+        to: 'CIELab',
+        steps: 20,
     };
-    gui.add(options, 'pos', 0.5, 2);
-    gui.add(options, 'speed', -0.1, 0.1);
-    gui.add(options, 'grid');
-    gui.add(options, 'convex');
-    const steps = 20;
 
     const group = new Drei.Group();
+    mat4.translate(group.matrix, group.matrix, [-0.5, -0.5, -0.5]);
     scene.root.addChild(group);
+
+    {
+        const t = new Drei.Tessellator(new Drei.MonosRGBMaterial());
+        t
+            .v_pos(0, 0, 0).v_pos(0, 0, 1).v_pos(0, 1, 0).v_pos(0, 1, 1)
+            .v_pos(1, 0, 0).v_pos(1, 0, 1).v_pos(1, 1, 0).v_pos(1, 1, 1)
+            .v_pos(0, 0, 0).v_pos(0, 1, 0).v_pos(0, 0, 1).v_pos(0, 1, 1)
+            .v_pos(1, 0, 0).v_pos(1, 1, 0).v_pos(1, 0, 1).v_pos(1, 1, 1)
+            .v_pos(0, 0, 0).v_pos(1, 0, 0).v_pos(0, 0, 1).v_pos(1, 0, 1)
+            .v_pos(0, 1, 0).v_pos(1, 1, 0).v_pos(0, 1, 1).v_pos(1, 1, 1);
+        const cube = t.build(gl.LINES);
+        cube.uniforms.u_sRGB = [0.8, 0.8, 0.8];
+        group.addChild(cube);
+    }
 
     let grid;
     {
         const t = new Drei.Tessellator(new Drei.MonosRGBMaterial());
-        for (let i = 0; i < 1; i += 0.1) for (let j = 0; j < 1; j += 0.1) {
+        const step = 0.1;
+        for (let i = 0; i <= 1; i += step) for (let j = 0; j <= 1; j += step) {
             t.v_pos(i, j, 0).v_pos(i, j, 1);
             t.v_pos(i, 0, j).v_pos(i, 1, j);
             t.v_pos(0, i, j).v_pos(1, i, j);
@@ -61,6 +71,7 @@ const proj = async ({ gl }) => {
 
     let gamut;
     const generateGamut = () => {
+        const steps = options.steps;
         const material = new Drei.CorrectedsRGBMaterial();
         const t = new Drei.Tessellator(material);
         const mix = (origin, delta, t) => origin.map((c, n) => c + delta[n] * t);
@@ -93,6 +104,7 @@ const proj = async ({ gl }) => {
 
     let convex;
     const generateConvex = () => {
+        const steps = options.steps;
         const material = new Drei.MonosRGBMaterial();
         const t = new Drei.Tessellator(material);
         const mix = (origin, delta, t) => origin.map((c, n) => c + delta[n] * t);
@@ -119,6 +131,7 @@ const proj = async ({ gl }) => {
             }
         });
         convex = t.build(gl.LINES);
+        convex.visible = options.convex;
         convex.uniforms.u_sRGB = [0, 0, 0];
         mat4.translate(convex.matrix, convex.matrix, [0.5, 0.5, 0.5]);
         mat4.scale(convex.matrix, convex.matrix, [1.01, 1.01, 1.01]);
@@ -127,11 +140,27 @@ const proj = async ({ gl }) => {
     };
     generateConvex();
 
+    const controls = new OrbitControls({
+        zoom: false,
+        distance: 1.4,
+        element: canvas,
+    });
+
     const camera = new Drei.PerspectiveCamera(90 / 180 * Math.PI, 0.01, 100);
-    mat4.translate(camera.matrix, camera.matrix, [0, 0, options.pos]);
     scene.root.addChild(camera);
     scene.camera = camera;
+    mat4.lookAt(camera.matrix, controls.position, controls.target, controls.up);
+    mat4.invert(camera.matrix, camera.matrix);
 
+    const gui = new dat.GUI();
+    gui.add(options, 'grid');
+    gui.add(options, 'convex');
+    gui.add(options, 'steps', 5, 100, 1).onChange(() => {
+        if (gamut) gamut.remove();
+        generateGamut();
+        if (convex) convex.remove();
+        generateConvex();
+    });
     gui.add(options, 'to', Object.keys(convertions)).onChange(() => {
         if (gamut) gamut.remove();
         generateGamut();
@@ -139,24 +168,20 @@ const proj = async ({ gl }) => {
         generateConvex();
     });
 
-    let rotate = 0;
     run(gl, scene, camera, () => {
-        mat4.identity(scene.camera.matrix);
-        mat4.translate(camera.matrix, camera.matrix, [0, 0, options.pos]);
-        rotate += options.speed;
-        mat4.identity(group.matrix);
-        mat4.rotateY(group.matrix, group.matrix, rotate);
-        mat4.translate(group.matrix, group.matrix, [-0.5, -0.5, -0.5]);
+        controls.update();
+        mat4.lookAt(camera.matrix, controls.position, controls.target, controls.up);
+        mat4.invert(camera.matrix, camera.matrix);
         grid.visible = options.grid;
         convex.visible = options.convex;
     });
 };
 
 function Projection() {
-    const scale = 2;
+    const scale = 1;
     return (
         <Canvas
-            width={600 * scale}
+            width={1200 * scale}
             height={600 * scale}
             style={{
                 transform: `scale(${1 / scale})`,

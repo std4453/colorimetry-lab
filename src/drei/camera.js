@@ -43,7 +43,7 @@ class PerspectiveCamera extends Camera {
 
     updateMatrix() {
         mat4.identity(this.projectionMatrix);
-        const aspect = this.gl.canvas.clientHeight / this.gl.canvas.clientWidth;
+        const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
         mat4.perspective(this.projectionMatrix, this.fovy, aspect, this.near, this.far);
     }
 }
