@@ -7,6 +7,7 @@ import livereload from 'rollup-plugin-livereload';
 import glslify from 'rollup-plugin-glslify';
 import babel from 'rollup-plugin-babel';
 import { string } from "rollup-plugin-string";
+import copy from "rollup-plugin-copy";
 // import { uglify } from 'rollup-plugin-uglify';
 
 import react from 'react';
@@ -34,8 +35,15 @@ export default {
         glslify({ basedir: 'src/shaders' }),
         string({ include: '**/*.csv' }),
         babel({ exclude: 'node_modules/**' }),
+        copy({
+            targets: [
+                { src: 'src/index.html', dest: 'dist' },
+            ],
+        }),
         // uglify(),
-        livereload({ watch: 'dist' }),
-        serve(),
+        ...(process.env.BUILD === 'production' ? [] : [
+            livereload({ watch: 'dist' }),
+            serve('dist'),
+        ]),
     ],
 };
