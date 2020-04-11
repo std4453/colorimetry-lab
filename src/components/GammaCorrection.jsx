@@ -7,7 +7,7 @@ import materialClasses from '../materials';
 
 const shades = ({ canvas, gl }) => {
     const { width, height } = canvas;
-    const barWidth = width / 5, barHeight = height / 3 * 2;
+    const barWidth = Math.floor(width / 10), barHeight = Math.floor(height / 3);
 
     const Drei = makeDrei(gl, materialClasses);
     const scene = new Drei.Scene();
@@ -17,11 +17,11 @@ const shades = ({ canvas, gl }) => {
         const t = new Drei.Tessellator(material);
         t
             .v_pos(0, 0, 0).v_sRGB(0, 0, 0)
-            .v_pos(barWidth, 0, 0).v_sRGB(0, 0, 0)
-            .v_pos(barWidth, barHeight, 0).v_sRGB(1, 1, 1)
-            .v_pos(0, barHeight, 0).v_sRGB(1, 1, 1)
+            .v_pos(barWidth * 2, 0, 0).v_sRGB(0, 0, 0)
+            .v_pos(barWidth * 2, barHeight * 2, 0).v_sRGB(1, 1, 1)
+            .v_pos(0, barHeight * 2, 0).v_sRGB(1, 1, 1)
         const rect = t.build(gl.TRIANGLE_FAN);
-        mat4.translate(rect.matrix, rect.matrix, [-barWidth * 1.5, -barHeight * 0.5, 0]);
+        mat4.translate(rect.matrix, rect.matrix, [-barWidth * 3, -barHeight, 0]);
         scene.root.addChild(rect);
     }
 
@@ -30,11 +30,11 @@ const shades = ({ canvas, gl }) => {
         const t = new Drei.Tessellator(material);
         t
             .v_pos(0, 0, 0).v_gray(0).v_tex(0, 0)
-            .v_pos(barWidth, 0, 0).v_gray(0).v_tex(1, 0)
-            .v_pos(barWidth, barHeight, 0).v_gray(1).v_tex(1, 1)
-            .v_pos(0, barHeight, 0).v_gray(1).v_tex(0, 1)
+            .v_pos(barWidth * 2, 0, 0).v_gray(0).v_tex(barWidth * 2, 0)
+            .v_pos(barWidth * 2, barHeight * 2, 0).v_gray(1).v_tex(barWidth * 2, barHeight * 2)
+            .v_pos(0, barHeight * 2, 0).v_gray(1).v_tex(0, barHeight * 2)
         const rect = t.build(gl.TRIANGLE_FAN);
-        mat4.translate(rect.matrix, rect.matrix, [-barWidth * 0.5, -barHeight * 0.5, 0]);
+        mat4.translate(rect.matrix, rect.matrix, [-barWidth, -barHeight, 0]);
         scene.root.addChild(rect);
     }
 
@@ -43,11 +43,11 @@ const shades = ({ canvas, gl }) => {
         const t = new Drei.Tessellator(material);
         t
             .v_pos(0, 0, 0).v_gray(0).v_tex(0, 0)
-            .v_pos(barWidth, 0, 0).v_gray(0).v_tex(1, 0)
-            .v_pos(barWidth, barHeight, 0).v_gray(1).v_tex(1, 1)
-            .v_pos(0, barHeight, 0).v_gray(1).v_tex(0, 1)
+            .v_pos(barWidth * 2, 0, 0).v_gray(0).v_tex(1, 0)
+            .v_pos(barWidth * 2, barHeight * 2, 0).v_gray(1).v_tex(1, 1)
+            .v_pos(0, barHeight * 2, 0).v_gray(1).v_tex(0, 1)
         const rect = t.build(gl.TRIANGLE_FAN);
-        mat4.translate(rect.matrix, rect.matrix, [barWidth * 0.5, -barHeight * 0.5, 0]);
+        mat4.translate(rect.matrix, rect.matrix, [barWidth, -barHeight, 0]);
         scene.root.addChild(rect);
     }
 
@@ -78,7 +78,6 @@ function GammaCorrection() {
     return (
         <>
             <ShadeBars scale={scale}/>
-            <ShadeBars scale={scale / 2}/>
         </>
     );
 }
